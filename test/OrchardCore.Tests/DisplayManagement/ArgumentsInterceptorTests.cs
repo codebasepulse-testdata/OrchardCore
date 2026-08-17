@@ -1,5 +1,3 @@
-using OrchardCore.DisplayManagement;
-using Xunit;
 using DisplayManagementArguments = OrchardCore.DisplayManagement.Arguments;
 
 #nullable enable
@@ -13,7 +11,7 @@ namespace OrchardCore.Tests.DisplayManagement;
 public partial class ArgumentsInterceptorTests
 {
     [Fact]
-    public void From_WithSimpleAnonymousType_CreatesNamedEnumerable()
+    public void From_SimpleAnonymousType_CreatesNamedEnumerable()
     {
         // This call may be intercepted if Interceptors is enabled
         var result = DisplayManagementArguments.From(new { Name = "Test", Value = 42 });
@@ -25,7 +23,7 @@ public partial class ArgumentsInterceptorTests
     }
 
     [Fact]
-    public void From_WithComplexAnonymousType_CreatesNamedEnumerable()
+    public void From_ComplexAnonymousType_CreatesNamedEnumerable()
     {
         // This call may be intercepted if Interceptors is enabled
         var result = DisplayManagementArguments.From(new
@@ -47,7 +45,7 @@ public partial class ArgumentsInterceptorTests
     }
 
     [Fact]
-    public void From_WithMultipleSameSignature_ReusesSameType()
+    public void From_MultipleSameSignature_ReusesSameType()
     {
         // These calls should use the same generated type if intercepted
         var result1 = DisplayManagementArguments.From(new { X = 1, Y = 2 });
@@ -60,7 +58,7 @@ public partial class ArgumentsInterceptorTests
     }
 
     [Fact]
-    public void From_WithDifferentSignatures_CreatesDifferentTypes()
+    public void From_DifferentSignatures_CreatesDifferentTypes()
     {
         // These should generate different types
         var result1 = DisplayManagementArguments.From(new { Name = "Test" });
@@ -71,7 +69,7 @@ public partial class ArgumentsInterceptorTests
     }
 
     [Fact]
-    public void From_WithNullableProperties_HandlesCorrectly()
+    public void From_NullableProperties_HandlesCorrectly()
     {
         var result = DisplayManagementArguments.From(new
         {
@@ -87,7 +85,7 @@ public partial class ArgumentsInterceptorTests
     }
 
     [Fact]
-    public void From_WithNestedAnonymousType_CreatesCorrectStructure()
+    public void From_NestedAnonymousType_CreatesCorrectStructure()
     {
         // Nested anonymous types should be handled correctly, but this will still use reflection.
         var result = DisplayManagementArguments.From(new
@@ -98,7 +96,7 @@ public partial class ArgumentsInterceptorTests
 
         Assert.Equal(2, result.Named.Count);
         Assert.Equal("Product", result.Named["Name"]);
-        
+
         var metadata = result.Named["Metadata"];
         Assert.NotNull(metadata);
     }
@@ -111,7 +109,7 @@ public partial class ArgumentsInterceptorTests
         // Without interceptors: reflection with caching
 
         const int iterations = 1000;
-        
+
         for (int i = 0; i < iterations; i++)
         {
             var result = DisplayManagementArguments.From(new { Index = i, Name = $"Item{i}" });
@@ -138,7 +136,7 @@ public partial class ArgumentsNamedTypeTests
     }
 
     [Fact]
-    public void From_WithGeneratedArgumentsProvider_UsesGeneratedCode()
+    public void From_GeneratedArgumentsProvider_UsesGeneratedCode()
     {
         var result = DisplayManagementArguments.From(new ProductArguments
         {

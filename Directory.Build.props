@@ -6,9 +6,15 @@
     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemDefinitionGroup Condition="'$(IsExe)' != 'true' AND '$(IsTestProject)' != 'true' AND '$(OutputType)' != 'Exe'">
+  <ProjectReference>
+  </ProjectReference>
+</ItemDefinitionGroup>
+
   <PropertyGroup>
     <!-- https://aka.ms/vs-build-acceleration -->
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+    <RestoreUseStaticGraphEvaluation Condition="'$(RestoreUseStaticGraphEvaluation)' == ''">true</RestoreUseStaticGraphEvaluation>
   </PropertyGroup>
 
   <PropertyGroup Label="Analysis rules">

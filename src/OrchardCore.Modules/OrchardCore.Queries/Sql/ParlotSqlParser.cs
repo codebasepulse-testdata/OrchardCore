@@ -10,7 +10,7 @@ namespace OrchardCore.Queries.Sql;
 /// </summary>
 public class ParlotSqlParser
 {
-public static readonly Parser<StatementList> Statements;
+    public static readonly Parser<StatementList> Statements;
 
     static ParlotSqlParser()
     {
@@ -56,7 +56,7 @@ public static readonly Parser<StatementList> Statements;
         var FALSE = Terms.Keyword("FALSE", caseInsensitive: true);
         var OVER = Terms.Keyword("OVER", caseInsensitive: true);
         var PARTITION = Terms.Keyword("PARTITION", caseInsensitive: true);
-        
+
         // Keywords can't be used as identifiers or function names
         var keywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -86,7 +86,7 @@ public static readonly Parser<StatementList> Statements;
         // Without the keywords check "FROM a WHERE" would interpret "WHERE" as an alias since "AS" is optional
         var identifierNoKeywords = Separated(DOT, simpleIdentifier).When((ctx, parts) => parts.Count > 0 && !keywords.Contains(parts[0]))
             .Then(parts => new Identifier(parts));
-            
+
         // Deferred parsers
         var expression = Deferred<Expression>();
         var selectStatement = Deferred<SelectStatement>();
@@ -183,7 +183,26 @@ public static readonly Parser<StatementList> Statements;
             (Terms.Char('|'), (a, b) => new BinaryExpression(a, BinaryOperator.BitwiseOr, b))
         );
 
-        var andExpr = bitwise.LeftAssociative(
+        // BETWEEN and IN are predicates at the comparison level: they must be parsed
+        // BEFORE AND/OR are applied. Otherwise "a IN (...) AND b" would only parse
+        // "a IN (...)" and leave "AND b" dangling, which fails the whole statement.
+        var betweenPredicate = bitwise.And(NOT.Optional()).AndSkip(BETWEEN).And(bitwise).AndSkip(AND).And(bitwise)
+            .Then<Expression>(result =>
+            {
+                var (expr, notKeyword, lower, upper) = result;
+                return new BetweenExpression(expr, lower, upper, notKeyword.HasValue);
+            });
+
+        var inPredicate = bitwise.And(NOT.Optional()).AndSkip(IN).AndSkip(LPAREN).And(functionArgs).AndSkip(RPAREN)
+            .Then<Expression>(result =>
+            {
+                var (expr, notKeyword, values) = result;
+                return new InExpression(expr, values, notKeyword.HasValue);
+            });
+
+        var predicate = betweenPredicate.Or(inPredicate).Or(bitwise);
+
+        var andExpr = predicate.LeftAssociative(
             (AND, (a, b) => new BinaryExpression(a, BinaryOperator.And, b))
         );
 
@@ -191,22 +210,7 @@ public static readonly Parser<StatementList> Statements;
             (OR, (a, b) => new BinaryExpression(a, BinaryOperator.Or, b))
         );
 
-        // BETWEEN and IN expressions
-        var betweenExpr = andExpr.And(NOT.Optional()).AndSkip(BETWEEN).And(bitwise).AndSkip(AND).And(bitwise)
-            .Then<Expression>(result =>
-            {
-                var (expr, notKeyword, lower, upper) = result;
-                return new BetweenExpression(expr, lower, upper, notKeyword.HasValue);
-            });
-
-        var inExpr = andExpr.And(NOT.Optional()).AndSkip(IN).AndSkip(LPAREN).And(functionArgs).AndSkip(RPAREN)
-            .Then<Expression>(result =>
-            {
-                var (expr, notKeyword, values) = result;
-                return new InExpression(expr, values, notKeyword.HasValue);
-            });
-
-        expression.Parser = betweenExpr.Or(inExpr).Or(orExpr);
+        expression.Parser = orExpr;
 
         // Column source
         var columnSourceId = identifier.Then<ColumnSource>(id => new ColumnSourceIdentifier(id));

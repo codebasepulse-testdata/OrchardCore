@@ -1,11 +1,7 @@
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Extensions.Options;
 using OrchardCore.ResourceManagement;
 using OrchardCore.ResourceManagement.TagHelpers;
 using ResourceLocation = OrchardCore.ResourceManagement.ResourceLocation;
@@ -24,7 +20,7 @@ public class StyleTagHelperTests : IDisposable
     }
 
     [Fact]
-    public async Task AnonymousStyleWithSrcOnly_RegistersUrlWithDebugSrc()
+    public async Task AnonymousStyleWithSrcOnly_RegistersUrlWithDebugSrc_Succeeds()
     {
         // Arrange
         var resourceManager = CreateResourceManager();
@@ -52,7 +48,7 @@ public class StyleTagHelperTests : IDisposable
     }
 
     [Fact]
-    public async Task AnonymousStyleWithSrcAndDependsOn_DefinesInInlineManifest()
+    public async Task AnonymousStyleWithSrcAndDependsOn_DefinesInInlineManifest_Succeeds()
     {
         // Arrange — This is the primary test for the fix in PR #18909.
         var options = new ResourceManagementOptions();
@@ -168,7 +164,7 @@ public class StyleTagHelperTests : IDisposable
     }
 
     [Fact]
-    public async Task NamedStyleWithNameAndSrc_DefinesInInlineManifest()
+    public async Task NamedStyleWithNameAndSrc_DefinesInInlineManifest_Succeeds()
     {
         // Arrange
         var resourceManager = CreateResourceManager();
@@ -200,7 +196,7 @@ public class StyleTagHelperTests : IDisposable
     }
 
     [Fact]
-    public async Task NamedStyleRequireOnly_RegistersResource()
+    public async Task NamedStyleRequireOnly_RegistersResource_Succeeds()
     {
         // Arrange
         var options = new ResourceManagementOptions();
@@ -232,7 +228,7 @@ public class StyleTagHelperTests : IDisposable
     }
 
     [Fact]
-    public async Task DuplicateAnonymousStylesWithDependencies_DeduplicateByName()
+    public async Task DuplicateAnonymousStylesWithDependencies_DeduplicateByName_Succeeds()
     {
         // Arrange
         var options = new ResourceManagementOptions();

@@ -1,13 +1,13 @@
+using System.Net;
+using System.Net.Mime;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using OrchardCore.Modules.FileProviders;
-using System.Net;
-using System.Net.Mime;
 
 namespace OrchardCore.Seo.Services;
 
-public class RobotsMiddleware
+public sealed class RobotsMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IStaticFileProvider _staticFileProvider;
@@ -70,7 +70,7 @@ public class RobotsMiddleware
     {
         response.StatusCode = (int)HttpStatusCode.OK;
         response.HttpContext.Features.GetRequiredFeature<IHttpResponseFeature>().ReasonPhrase = null;
-            
+
         if (response.Body.CanSeek)
         {
             response.Body.SetLength(0);

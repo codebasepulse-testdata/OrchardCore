@@ -146,6 +146,7 @@ public sealed class Startup : StartupBase
         services.AddPermissionProvider<ContentTypePermissions>();
         services.AddScoped<IAuthorizationHandler, ContentTypeAuthorizationHandler>();
         services.AddShapeTableProvider<Shapes>();
+        services.AddShapeTableProvider<AdminDashboardShapeTableProvider>();
         services.AddNavigationProvider<AdminMenu>();
         services.AddScoped<IContentDisplayDriver, ContentsDriver>();
         services.AddScoped<IContentHandler, ContentsHandler>();
@@ -304,5 +305,6 @@ public sealed class DataLocalizationStartup : StartupBase
     {
         services.AddScoped<ILocalizationDataProvider, ContentTypeDataLocalizationProvider>();
         services.AddScoped<ILocalizationDataProvider, ContentFieldDataLocalizationProvider>();
+        services.AddScoped<ILocalizationDataProvider, ContentTypesAdminNodeDataLocalizationProvider>();
     }
 }

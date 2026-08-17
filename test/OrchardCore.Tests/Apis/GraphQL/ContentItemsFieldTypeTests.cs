@@ -10,6 +10,7 @@ using OrchardCore.ContentManagement.GraphQL.Options;
 using OrchardCore.ContentManagement.GraphQL.Queries;
 using OrchardCore.ContentManagement.Records;
 using OrchardCore.Data;
+using OrchardCore.Entities;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Extensions;
 using OrchardCore.Json;
@@ -138,7 +139,7 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ShouldFilterByContentItemIndex()
+    public async Task Filter_ByContentItemIndex_Succeeds()
     {
         _store.RegisterIndexes<AnimalIndexProvider>();
 
@@ -168,11 +169,11 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
                         .ResolveAsync(context) as IEnumerable<ContentItem>;
 
         Assert.Single(dogs);
-        Assert.Equal("doug", dogs.First().As<AnimalPart>().Name);
+        Assert.Equal("doug", dogs.First().GetOrCreate<AnimalPart>().Name);
     }
 
     [Fact]
-    public async Task ShouldFilterByContentItemIndexWhenSqlTablePrefixIsUsed()
+    public async Task Filter_SqlTablePrefixIsUsed_Succeeds()
     {
         _prefixedStore.RegisterIndexes<AnimalIndexProvider>();
 
@@ -206,14 +207,14 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var dogs = await ResolveContentItems(type, context);
 
         Assert.Single(dogs);
-        Assert.Equal("doug", dogs.First().As<AnimalPart>().Name);
+        Assert.Equal("doug", dogs.First().GetOrCreate<AnimalPart>().Name);
     }
 
     [Theory]
     [InlineData("animal")]
     [InlineData("ANIMAL")]
     [InlineData("Animal")]
-    public async Task ShouldFilterByAliasIndexRegardlessOfInputFieldCase(string fieldName)
+    public async Task Filter_ByAliasIndexRegardlessOfInputFieldCase_Succeeds(string fieldName)
     {
         _store.RegisterIndexes<AnimalIndexProvider>();
 
@@ -247,11 +248,11 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var dogs = await ResolveContentItems(type, context);
 
         Assert.Single(dogs);
-        Assert.Equal("doug", dogs.First().As<AnimalPart>().Name);
+        Assert.Equal("doug", dogs.First().GetOrCreate<AnimalPart>().Name);
     }
 
     [Fact]
-    public async Task ShouldBeAbleToUseTheSameIndexForMultipleAliases()
+    public async Task Be_AbleToUseTheSameIndexForMultipleAliases_Succeeds()
     {
         _store.RegisterIndexes<AnimalIndexProvider>();
 
@@ -282,17 +283,17 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var cats = await ResolveContentItems(type, context);
 
         Assert.Single(cats);
-        Assert.Equal("doug", cats.First().As<Animal>().Name);
+        Assert.Equal("doug", cats.First().GetOrCreate<Animal>().Name);
 
         context.Arguments["where"] = new ArgumentValue(JObject.Parse("{ \"dogs\": { \"name\": \"doug\" } }"), ArgumentSource.Variable);
         var dogs = await ResolveContentItems(type, context);
 
         Assert.Single(dogs);
-        Assert.Equal("doug", dogs.First().As<Animal>().Name);
+        Assert.Equal("doug", dogs.First().GetOrCreate<Animal>().Name);
     }
 
     [Fact]
-    public async Task ShouldFilterOnMultipleIndexesOnSameAlias()
+    public async Task Filter_MultipleIndexesOnSameAlias_Succeeds()
     {
         _store.RegisterIndexes<AnimalIndexProvider>();
         _store.RegisterIndexes<AnimalTraitsIndexProvider>();
@@ -335,13 +336,13 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var animals = await ResolveContentItems(type, context);
 
         Assert.Single(animals);
-        Assert.Equal("doug", animals.First().As<Animal>().Name);
-        Assert.True(animals.First().As<Animal>().IsScary);
-        Assert.False(animals.First().As<Animal>().IsHappy);
+        Assert.Equal("doug", animals.First().GetOrCreate<Animal>().Name);
+        Assert.True(animals.First().GetOrCreate<Animal>().IsScary);
+        Assert.False(animals.First().GetOrCreate<Animal>().IsHappy);
     }
 
     [Fact]
-    public async Task ShouldFilterPartsWithoutAPrefixWhenThePartHasNoPrefix()
+    public async Task Filter_ThePartHasNoPrefix_Succeeds()
     {
         _store.RegisterIndexes<AnimalIndexProvider>();
 
@@ -372,11 +373,11 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var dogs = await ResolveContentItems(type, context);
 
         Assert.Single(dogs);
-        Assert.Equal("doug", dogs.First().As<AnimalPart>().Name);
+        Assert.Equal("doug", dogs.First().GetOrCreate<AnimalPart>().Name);
     }
 
     [Fact]
-    public async Task ShouldFilterNestedPartInputWhenPartNameHasNoPrefix()
+    public async Task Filter_PartNameHasNoPrefix_Succeeds()
     {
         _store.RegisterIndexes<AnimalLocalizationIndexProvider>();
 
@@ -411,14 +412,14 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var animals = await ResolveContentItems(type, context);
 
         Assert.Single(animals);
-        Assert.Equal("cs-CZ", animals.First().As<AnimalPart>().Culture);
+        Assert.Equal("cs-CZ", animals.First().GetOrCreate<AnimalPart>().Culture);
     }
 
     [Theory]
     [InlineData("animal")]
     [InlineData("ANIMAL")]
     [InlineData("Animal")]
-    public async Task ShouldFilterNestedPartInputRegardlessOfInputFieldCase(string fieldName)
+    public async Task Filter_NestedPartInputRegardlessOfInputFieldCase_Succeeds(string fieldName)
     {
         _store.RegisterIndexes<AnimalLocalizationIndexProvider>();
 
@@ -449,11 +450,11 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var animals = await ResolveContentItems(type, context);
 
         Assert.Single(animals);
-        Assert.Equal("cs-CZ", animals.First().As<AnimalPart>().Culture);
+        Assert.Equal("cs-CZ", animals.First().GetOrCreate<AnimalPart>().Culture);
     }
 
     [Fact]
-    public async Task ShouldFilterByCollapsedWhereInputForCollapsedParts()
+    public async Task Filter_ByCollapsedWhereInputForCollapsedParts_Succeeds()
     {
         _store.RegisterIndexes<AnimalIndexProvider>();
 
@@ -484,7 +485,7 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
         var dogs = await ResolveContentItems(type, context);
 
         Assert.Single(dogs);
-        Assert.Equal("doug", dogs.First().As<AnimalPart>().Name);
+        Assert.Equal("doug", dogs.First().GetOrCreate<AnimalPart>().Name);
     }
 
     private static async Task<IEnumerable<ContentItem>> ResolveContentItems(ContentItemsFieldType type, ResolveFieldContext context)
@@ -517,15 +518,15 @@ public class ContentItemsFieldTypeTests : IAsyncLifetime
                 {
                     Name = "Animal",
                 }),
-                Arguments =
-                [
+                Arguments = new QueryArguments
+                {
                     new QueryArgument<WhereInputObjectGraphType>
                     {
                         Name = "where",
                         Description = "filters the animals",
                         ResolvedType = where,
-                    }
-                ],
+                    },
+                },
             },
             RequestServices = services,
         };
@@ -631,12 +632,23 @@ public class AnimalIndexProvider : IndexProvider<ContentItem>
         context.For<AnimalIndex>()
             .Map(contentItem =>
             {
-                return new AnimalIndex
+                if (contentItem.TryGet<Animal>(out var animal))
                 {
-                    Name = contentItem.As<Animal>() != null
-                        ? contentItem.As<Animal>().Name
-                        : contentItem.As<AnimalPart>().Name,
-                };
+                    return new AnimalIndex
+                    {
+                        Name = animal.Name,
+                    };
+                }
+
+                if (contentItem.TryGet<AnimalPart>(out var animalPart))
+                {
+                    return new AnimalIndex
+                    {
+                        Name = animalPart.Name,
+                    };
+                }
+
+                return null;
             });
     }
 }
@@ -654,24 +666,25 @@ public class AnimalTraitsIndexProvider : IndexProvider<ContentItem>
         context.For<AnimalTraitsIndex>()
             .Map(contentItem =>
             {
-                var animal = contentItem.As<Animal>();
-
-                if (animal != null)
+                if (contentItem.TryGet<Animal>(out var animal))
                 {
                     return new AnimalTraitsIndex
                     {
-                        IsHappy = contentItem.As<Animal>().IsHappy,
-                        IsScary = contentItem.As<Animal>().IsScary,
+                        IsHappy = animal.IsHappy,
+                        IsScary = animal.IsScary,
                     };
                 }
 
-                var animalPartSuffix = contentItem.As<AnimalPart>();
-
-                return new AnimalTraitsIndex
+                if (contentItem.TryGet<AnimalPart>(out var animalPart))
                 {
-                    IsHappy = animalPartSuffix.IsHappy,
-                    IsScary = animalPartSuffix.IsScary,
-                };
+                    return new AnimalTraitsIndex
+                    {
+                        IsHappy = animalPart.IsHappy,
+                        IsScary = animalPart.IsScary,
+                    };
+                }
+
+                return null;
             });
     }
 }
@@ -688,19 +701,30 @@ public class AnimalLocalizationIndexProvider : IndexProvider<ContentItem>
         context.For<AnimalLocalizationIndex>()
             .Map(contentItem =>
             {
-                var animal = contentItem.As<Animal>();
-
-                return new AnimalLocalizationIndex
+                if (contentItem.TryGet<Animal>(out var animal))
                 {
-                    Culture = animal?.Culture ?? contentItem.As<AnimalPart>().Culture,
-                };
+                    return new AnimalLocalizationIndex
+                    {
+                        Culture = animal.Culture,
+                    };
+                }
+
+                if (contentItem.TryGet<AnimalPart>(out var animalPart))
+                {
+                    return new AnimalLocalizationIndex
+                    {
+                        Culture = animalPart.Culture,
+                    };
+                }
+
+                return null;
             });
     }
 }
 
 public class MultipleAliasIndexProvider : IIndexAliasProvider
 {
-    private static readonly IndexAlias[] _aliases =
+    private static readonly IndexAlias[] s_aliases =
     [
         new IndexAlias
         {
@@ -724,13 +748,13 @@ public class MultipleAliasIndexProvider : IIndexAliasProvider
 
     public ValueTask<IEnumerable<IndexAlias>> GetAliasesAsync()
     {
-        return ValueTask.FromResult<IEnumerable<IndexAlias>>(_aliases);
+        return ValueTask.FromResult<IEnumerable<IndexAlias>>(s_aliases);
     }
 }
 
 public class AnimalLocalizationAliasProvider : IIndexAliasProvider
 {
-    private static readonly IndexAlias[] _aliases =
+    private static readonly IndexAlias[] s_aliases =
     [
         new IndexAlias
         {
@@ -742,13 +766,13 @@ public class AnimalLocalizationAliasProvider : IIndexAliasProvider
 
     public ValueTask<IEnumerable<IndexAlias>> GetAliasesAsync()
     {
-        return ValueTask.FromResult<IEnumerable<IndexAlias>>(_aliases);
+        return ValueTask.FromResult<IEnumerable<IndexAlias>>(s_aliases);
     }
 }
 
 public class MultipleIndexesIndexProvider : IIndexAliasProvider
 {
-    private static readonly IndexAlias[] _aliases =
+    private static readonly IndexAlias[] s_aliases =
     [
         new IndexAlias
         {
@@ -772,7 +796,7 @@ public class MultipleIndexesIndexProvider : IIndexAliasProvider
 
     public ValueTask<IEnumerable<IndexAlias>> GetAliasesAsync()
     {
-        return ValueTask.FromResult<IEnumerable<IndexAlias>>(_aliases);
+        return ValueTask.FromResult<IEnumerable<IndexAlias>>(s_aliases);
     }
 }
 
