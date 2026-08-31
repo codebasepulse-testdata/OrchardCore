@@ -6,10 +6,14 @@
     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
-<ItemDefinitionGroup Condition="'$(IsExe)' != 'true' AND '$(IsTestProject)' != 'true' AND '$(OutputType)' != 'Exe'">
+<PropertyGroup>
+  <!-- Pokud je projekt ve složce test/, nepovažovat ho za produkční knihovnu -->
+  <IsTestDirectory Condition="$(MSBuildProjectFullPath.Contains('\test\')) OR $(MSBuildProjectFullPath.Contains('/test/'))">true</IsTestDirectory>
+</PropertyGroup>
+
+<ItemDefinitionGroup Condition="'$(IsExe)' != 'true' AND '$(IsTestProject)' != 'true' AND '$(IsTestDirectory)' != 'true' AND '$(OutputType)' != 'Exe'">
   <ProjectReference>
     <Private>false</Private>
-    <PrivateAssets>compile</PrivateAssets>
   </ProjectReference>
 </ItemDefinitionGroup>
 
