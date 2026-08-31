@@ -15,15 +15,37 @@ public class SlugBenchmark
 
     [Benchmark]
 #pragma warning disable CA1822 // Mark members as static
-    public void EvaluateSlugifyWithShortSlug()
+    public string EvaluateSlugifyWithShortSlug()
     {
-        s_slugService.Slugify("Je veux aller à Saint-Étienne");
+        // Zpomalení běhu benchmarku
+        //System.Threading.Thread.Sleep(5);
+        return s_slugService.Slugify("Je veux aller à Saint-Étienne");
     }
 
     [Benchmark]
-    public void EvaluateSlugifyWithLongSlug()
+    public int EvaluateSlugifyWithLongSlug()
     {
-        s_slugService.Slugify("Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne");
+        // Větší alokace paměti – data jsou vrácena/použita, takže je JIT/optimalizátor nemůže eliminovat (dead-code elimination)
+        var dummyAllocations = new System.Collections.Generic.List<string>(500);
+        var totalLength = 0;
+        for (var i = 0; i < 500; i++)
+        {
+            var str = new string('x', 1024) + i;
+            dummyAllocations.Add(str);
+            totalLength += str.Length;
+        }
+
+        // Mírné zpomalení (cca 20 % navíc)
+        var dummySum = 0;
+        for (var i = 0; i < 100; i++)
+        {
+            dummyAllocations.Add(i.ToString());
+            dummySum += dummyAllocations[i].Length;
+        }
+
+        var slug = s_slugService.Slugify("Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne Je veux aller à Saint-Étienne");
+
+        return totalLength + slug.Length + dummyAllocations.Count + dummySum;
     }
 #pragma warning restore CA1822 // Mark members as static
 }
