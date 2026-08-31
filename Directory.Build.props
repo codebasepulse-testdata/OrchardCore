@@ -6,8 +6,10 @@
     <PackageReference Include="StyleCop.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
-  <ItemDefinitionGroup Condition="'$(IsExe)' != 'true' AND '$(IsTestProject)' != 'true' AND '$(OutputType)' != 'Exe'">
+<ItemDefinitionGroup Condition="'$(IsExe)' != 'true' AND '$(IsTestProject)' != 'true' AND '$(OutputType)' != 'Exe'">
   <ProjectReference>
+    <Private>false</Private>
+    <PrivateAssets>compile</PrivateAssets>
   </ProjectReference>
 </ItemDefinitionGroup>
 
