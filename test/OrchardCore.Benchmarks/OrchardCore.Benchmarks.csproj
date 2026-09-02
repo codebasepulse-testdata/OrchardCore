@@ -13,6 +13,8 @@
     BenchmarkDotNet's auto-generated entry point. -->
     <StartupObject>OrchardCore.Benchmarks.Program</StartupObject>
     <InterceptorsNamespaces>$(InterceptorsNamespaces);OrchardCore.DisplayManagement.Generated</InterceptorsNamespaces>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+  <GenerateStaticWebAssetsManifest>false</GenerateStaticWebAssetsManifest>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,6 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);CA1707</NoWarn>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+  <GenerateStaticWebAssetsManifest>false</GenerateStaticWebAssetsManifest>
   </PropertyGroup>
 
   <ItemGroup>
