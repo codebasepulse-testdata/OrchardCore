@@ -14,6 +14,8 @@
     <StartupObject>OrchardCore.Benchmarks.Program</StartupObject>
     <InterceptorsNamespaces>$(InterceptorsNamespaces);OrchardCore.DisplayManagement.Generated</InterceptorsNamespaces>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+    <HasStaticWebAssets>false</HasStaticWebAssets>
+    <GenerateStaticWebAssetsManifest>false</GenerateStaticWebAssetsManifest>
   <GenerateStaticWebAssetsManifest>false</GenerateStaticWebAssetsManifest>
   </PropertyGroup>
 

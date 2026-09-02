@@ -6,6 +6,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>$(CommonTargetFrameworks)</TargetFrameworks>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+    <HasStaticWebAssets>false</HasStaticWebAssets>
+    <GenerateStaticWebAssetsManifest>false</GenerateStaticWebAssetsManifest>
   </PropertyGroup>
 
   <ItemGroup>
