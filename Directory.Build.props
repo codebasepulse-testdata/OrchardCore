@@ -9,6 +9,7 @@
 <PropertyGroup>
   <!-- Pokud je projekt ve složce test/, nepovažovat ho za produkční knihovnu -->
   <IsTestDirectory Condition="$(MSBuildProjectFullPath.Contains('\test\')) OR $(MSBuildProjectFullPath.Contains('/test/'))">true</IsTestDirectory>
+  <_SkipCopyBuildProduct>false</_SkipCopyBuildProduct>
 </PropertyGroup>
 
 <ItemDefinitionGroup Condition="'$(IsExe)' != 'true' AND '$(IsTestProject)' != 'true' AND '$(IsTestDirectory)' != 'true' AND '$(OutputType)' != 'Exe'">
