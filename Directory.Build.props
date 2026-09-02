@@ -17,6 +17,11 @@
   </ProjectReference>
 </ItemDefinitionGroup>
 
+<PropertyGroup Condition="!Exists('$(MSBuildProjectDirectory)\wwwroot') And !$(MSBuildProjectName.Contains('Web')) And !$(MSBuildProjectName.Contains('Tests'))">
+  <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+  <HasStaticWebAssets>false</HasStaticWebAssets>
+</PropertyGroup>
+
   <PropertyGroup>
     <!-- https://aka.ms/vs-build-acceleration -->
     <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
